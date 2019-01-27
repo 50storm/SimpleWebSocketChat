@@ -1,3 +1,5 @@
+CREATE DATABASE chat;
+
 DROP TABLE `chat`.`messages` ; 
 
 CREATE TABLE `chat`.`messages` (
