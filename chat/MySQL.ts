@@ -8,12 +8,13 @@ class MySQL {
   constructor() { this.mysql = require('mysql'); } // MySQLモジュールのロード
 
   // データベースにログイン(接続)する
-  public connect(host: string, db: string, user: string, pass: string): void {
+  public connect(host: string, db: string, user: string, pass: string, port: number): void {
     this.connection = this.mysql.createConnection({ // MySQLへ接続
       host: host,     // データベースが動いているホスト名(localhost)
       database: db,   // 使用するデータベース名(chat)
       user: user,     // ログインするユーザ名(root)
       password: pass, // ログインするユーザのパスワード(なし)
+      port : port
     });
   }
 

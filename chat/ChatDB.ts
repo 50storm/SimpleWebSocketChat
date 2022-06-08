@@ -3,15 +3,15 @@
 class ChatDB extends MySQL {
   private host: string = 'localhost'; // DBが動いているホスト名
   private user: string = 'chatadmin';      // DBにログインするユーザ名
-  //private pass: string = 'hiro1128';          // パスワード
-  //private pass: string = 'dbHiro!1981';          // パスワード
   private pass: string = 'chat!"#$!QAZ1234';          // パスワード
-  
   private db: string = 'chat';        // ログを格納するDB名
   private table: string = 'messages'; // テーブル名
+  // private port: number = 3306;
+  private port: number = 8889; // MAMP
+  
 
   public connect(): void {
-    super.connect(this.host, this.db, this.user, this.pass);  // DBにログインする
+    super.connect(this.host, this.db, this.user, this.pass, this.port);  // DBにログインする
   }
 
   public saveMessage(from, message, to: string = 'NULL'): void { //メッセージの保存
@@ -19,6 +19,7 @@ class ChatDB extends MySQL {
 	//修正：IDを自動登録するため
     var sql = 'INSERT INTO ' + this.table + ' ( from_name,to_name,message,time) VALUES '; // SQL文の組み立て
     sql += '(\'' + from + '\', \'' + to + '\', \'' + message + '\', NOW());';
+    console.log(sql);
     this.query(sql,
 				//修正:ログを出力しておく
 				(err, results)=>{
@@ -31,12 +32,14 @@ class ChatDB extends MySQL {
   //追加：最終行のメッセージを取り出す
   public getLastMessage(func):void {
 	  var sql = 'SELECT * FROM ' + this.table + ' ORDER BY id desc limit 1;'; // SQL文の組み立て
-	  
 	  this.query(sql, (err, results) => { // SQL文を発行しログを取得する
-	  　　//ログ出力
+	    //ログ出力
 	    console.log("最後のデータ");
+      console.log(sql);
 	    console.log(results);
-        func(results[0].id,results[0].from_name, results[0].to_name, results[0].message);
+        if (results != null) {
+          func(results[0].id,results[0].from_name, results[0].to_name, results[0].message);
+        }
 	  });  
   }
 
@@ -44,12 +47,12 @@ class ChatDB extends MySQL {
     var sql = 'SELECT * FROM ' + this.table + ' ORDER BY time;'; // SQL文の組み立て
 	
     this.query(sql, (err, results) => { // SQL文を発行しログを取得する
-      for (var i=0; i < results.length; i++)
-		//修正：idを取得
-        // func(results[i].from_name, results[i].to_name, results[i].message);
-        func(results[i].id,results[i].from_name, results[i].to_name, results[i].message);
+      if (results != null) { 
+        for (var i=0; i < results.length; i++) {
+          func(results[i].id,results[i].from_name, results[i].to_name, results[i].message);
+        } 
+      }
     });
   }
-  
   
 }

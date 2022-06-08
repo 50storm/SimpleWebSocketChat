@@ -136,12 +136,13 @@ var MySQL = /** @class */ (function () {
         this.mysql = require('mysql');
     } // MySQLモジュールのロード
     // データベースにログイン(接続)する
-    MySQL.prototype.connect = function (host, db, user, pass) {
+    MySQL.prototype.connect = function (host, db, user, pass, port) {
         this.connection = this.mysql.createConnection({
             host: host,
             database: db,
             user: user,
-            password: pass
+            password: pass,
+            port: port
         });
     };
     //細かいバグを修正
@@ -162,15 +163,15 @@ var ChatDB = /** @class */ (function (_super) {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.host = 'localhost'; // DBが動いているホスト名
         _this.user = 'chatadmin'; // DBにログインするユーザ名
-        //private pass: string = 'hiro1128';          // パスワード
-        //private pass: string = 'dbHiro!1981';          // パスワード
         _this.pass = 'chat!"#$!QAZ1234'; // パスワード
         _this.db = 'chat'; // ログを格納するDB名
         _this.table = 'messages'; // テーブル名
+        // private port: number = 3306;
+        _this.port = 8889; // MAMP
         return _this;
     }
     ChatDB.prototype.connect = function () {
-        _super.prototype.connect.call(this, this.host, this.db, this.user, this.pass); // DBにログインする
+        _super.prototype.connect.call(this, this.host, this.db, this.user, this.pass, this.port); // DBにログインする
     };
     ChatDB.prototype.saveMessage = function (from, message, to) {
         if (to === void 0) { to = 'NULL'; }
@@ -179,6 +180,7 @@ var ChatDB = /** @class */ (function (_super) {
         //修正：IDを自動登録するため
         var sql = 'INSERT INTO ' + this.table + ' ( from_name,to_name,message,time) VALUES '; // SQL文の組み立て
         sql += '(\'' + from + '\', \'' + to + '\', \'' + message + '\', NOW());';
+        console.log(sql);
         this.query(sql, 
         //修正:ログを出力しておく
         function (err, results) {
@@ -193,17 +195,21 @@ var ChatDB = /** @class */ (function (_super) {
         this.query(sql, function (err, results) {
             //ログ出力
             console.log("最後のデータ");
+            console.log(sql);
             console.log(results);
-            func(results[0].id, results[0].from_name, results[0].to_name, results[0].message);
+            if (results != null) {
+                func(results[0].id, results[0].from_name, results[0].to_name, results[0].message);
+            }
         });
     };
     ChatDB.prototype.getMessage = function (func) {
         var sql = 'SELECT * FROM ' + this.table + ' ORDER BY time;'; // SQL文の組み立て
         this.query(sql, function (err, results) {
-            for (var i = 0; i < results.length; i++)
-                //修正：idを取得
-                // func(results[i].from_name, results[i].to_name, results[i].message);
-                func(results[i].id, results[i].from_name, results[i].to_name, results[i].message);
+            if (results != null) {
+                for (var i = 0; i < results.length; i++) {
+                    func(results[i].id, results[i].from_name, results[i].to_name, results[i].message);
+                }
+            }
         });
     };
     return ChatDB;

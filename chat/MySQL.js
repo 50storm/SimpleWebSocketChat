@@ -6,12 +6,13 @@ var MySQL = /** @class */ (function () {
         this.mysql = require('mysql');
     } // MySQLモジュールのロード
     // データベースにログイン(接続)する
-    MySQL.prototype.connect = function (host, db, user, pass) {
+    MySQL.prototype.connect = function (host, db, user, pass, port) {
         this.connection = this.mysql.createConnection({
             host: host,
             database: db,
             user: user,
-            password: pass
+            password: pass,
+            port: port
         });
     };
     //細かいバグを修正
