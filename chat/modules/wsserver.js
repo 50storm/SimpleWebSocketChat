@@ -11,7 +11,13 @@ var WSServer;
             this.app = require('http').createServer(// httpサーバを作成する
             function (req, res) { _this.file.serve(req, res); } // 接続要求が来た時の処理
             );
-            this.io = require('socket.io')(this.app); // クライアントからsocket接続を受け付ける
+            // クライアントからsocket接続を受け付ける
+            this.io = require('socket.io')(this.app, {
+                cors: {
+                    origin: "http://localhost:80",
+                    methods: ["GET", "POST"]
+                }
+            }); // クライアントからsocket接続を受け付ける
             this.ns = require('node-static'); // node-staticモジュールの読み込み
             this.file = new this.ns.Server('./'); // ファイルサーバを作成する
         }
@@ -38,7 +44,7 @@ var WSServer;
         Server.prototype.emit = function (event, data) { this.io.sockets.emit(event, data); };
         // 内部グループを作成する
         Server.prototype.createInnerGroup = function (name) {
-            for (var i = 0; i < this.groups.length; i++) {
+            for (var i = 0; i < this.groups.length; i++) { // 同じグループ名があったら、nullを返す
                 var gp = this.groups[i];
                 if (gp.getName() === name)
                     return null;
@@ -56,7 +62,7 @@ var WSServer;
             var _this = this;
             this.handlers = []; // グループが持つイベントハンドラ
             this.group = server.createInnerGroup(name); // グループ管理用の内部グループを作成
-            if (!this.group) {
+            if (!this.group) { // 同じグループ名がすでにある場合は null
                 console.log('エラー: すでに同じグループ名があります(' + name + ')');
                 return;
             }
@@ -80,7 +86,7 @@ var WSServer;
                 case 'disconnect':
                     socket.on(event, function () { handler(socket); });
                     break;
-                default:// 上記以外のイベント
+                default: // 上記以外のイベント
                     socket.on(event, function (data) { handler(socket, data); });
             }
         };

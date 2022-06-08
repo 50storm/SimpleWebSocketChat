@@ -2,10 +2,12 @@ var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -24,7 +26,13 @@ var WSServer;
             this.app = require('http').createServer(// httpサーバを作成する
             function (req, res) { _this.file.serve(req, res); } // 接続要求が来た時の処理
             );
-            this.io = require('socket.io')(this.app); // クライアントからsocket接続を受け付ける
+            // クライアントからsocket接続を受け付ける
+            this.io = require('socket.io')(this.app, {
+                cors: {
+                    origin: "http://localhost:80",
+                    methods: ["GET", "POST"]
+                }
+            }); // クライアントからsocket接続を受け付ける
             this.ns = require('node-static'); // node-staticモジュールの読み込み
             this.file = new this.ns.Server('./'); // ファイルサーバを作成する
         }
@@ -153,10 +161,10 @@ var ChatDB = /** @class */ (function (_super) {
     function ChatDB() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.host = 'localhost'; // DBが動いているホスト名
-        _this.user = 'root'; // DBにログインするユーザ名
+        _this.user = 'chatadmin'; // DBにログインするユーザ名
         //private pass: string = 'hiro1128';          // パスワード
         //private pass: string = 'dbHiro!1981';          // パスワード
-        _this.pass = ''; // パスワード
+        _this.pass = 'chat!"#$!QAZ1234'; // パスワード
         _this.db = 'chat'; // ログを格納するDB名
         _this.table = 'messages'; // テーブル名
         return _this;
@@ -295,6 +303,6 @@ var ChatDBServer = /** @class */ (function (_super) {
     };
     return ChatDBServer;
 }(WSServer.Server));
-var cs = new ChatDBServer(8888); // サーバを作成し、起動する(local)
-//var cs = new ChatDBServer(80); // サーバを作成し、起動する(groom)
+// var cs = new ChatDBServer(8888); // サーバを作成し、起動する(local)
+var cs = new ChatDBServer(80); // サーバを作成し、起動する(groom)
 cs.start();

@@ -17,7 +17,13 @@ module WSServer {
       this.app = require('http').createServer(       // httpサーバを作成する
         (req, res) => { this.file.serve(req, res); } // 接続要求が来た時の処理
       );
-      this.io = require('socket.io')(this.app); // クライアントからsocket接続を受け付ける
+      // クライアントからsocket接続を受け付ける
+      this.io = require('socket.io')(this.app,{
+        cors: {
+          origin: "http://localhost:80",
+          methods: ["GET", "POST"]
+        }
+      }); // クライアントからsocket接続を受け付ける
       this.ns = require('node-static'); // node-staticモジュールの読み込み
       this.file = new this.ns.Server('./'); // ファイルサーバを作成する
     }

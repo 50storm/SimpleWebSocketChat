@@ -2,10 +2,10 @@
 /// <reference path="./MySQL.ts" />
 class ChatDB extends MySQL {
   private host: string = 'localhost'; // DBが動いているホスト名
-  private user: string = 'root';      // DBにログインするユーザ名
+  private user: string = 'chatadmin';      // DBにログインするユーザ名
   //private pass: string = 'hiro1128';          // パスワード
   //private pass: string = 'dbHiro!1981';          // パスワード
-  private pass: string = '';          // パスワード
+  private pass: string = 'chat!"#$!QAZ1234';          // パスワード
   
   private db: string = 'chat';        // ログを格納するDB名
   private table: string = 'messages'; // テーブル名

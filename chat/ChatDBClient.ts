@@ -139,9 +139,8 @@ function sendMessage(obj) { // サーバにデータを送る(HTMLから呼び�
 }
 
 window.onload = () => { 
-  //cc = new ChatClient(location.hostname, 8888); // ローカルで動いているサーバに接続
+  cc = new ChatClient(location.hostname, 80); // ローカルで動いているサーバに接続
    //cc = new ChatClient(location.hostname, 80); // GROOMで動いているサーバに接続
-   cc = new ChatClient(location.hostname, 8888); // conoha VPSで動いているサーバに接続
-   cc.start();
-  
+  //  cc = new ChatClient(location.hostname, 8888); // conoha VPSで動いているサーバに接続
+   cc.start(); 
 }

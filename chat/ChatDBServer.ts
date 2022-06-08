@@ -112,7 +112,7 @@ class ChatDBServer extends WSServer.Server {
   }
 }
 
-var cs = new ChatDBServer(8888); // サーバを作成し、起動する(local)
-//var cs = new ChatDBServer(80); // サーバを作成し、起動する(groom)
+// var cs = new ChatDBServer(8888); // サーバを作成し、起動する(local)
+var cs = new ChatDBServer(80); // サーバを作成し、起動する(groom)
 
 cs.start();
